@@ -17,6 +17,90 @@
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <link href='https://fonts.googleapis.com/css?family=Grand+Hotel' rel='stylesheet' type='text/css'>
 
+    <script>
+            function lovePost(id) {
+                let heart = document.getElementById("heart-image-"+id)
+                if(heart.src.indexOf("active") === -1) {
+                    heart.src = "tweeter/images/heart-active.svg"
+                } else {
+                    heart.src = "tweeter/images/heart.svg"
+                }
+            }
+            function deletePost(id) {
+                let elementId = "article-container-"+id
+                let element = document.getElementById(elementId)
+                element.remove()
+             }
+            function checkCharacterCount(textArea) {
+                let counter = document.getElementById("input-characters")
+                let container = document.getElementById("form-container")
+                
+                if (textArea.value.length > 140) {
+                    textArea.value = textArea.value.substr(0, 140)
+                    container.classList.add("is-error")
+                } else {
+                    container.classList.remove("is-error")
+                }
+                counter.innerText = textArea.value.length
+            }
+            function submitPost() {
+                let textArea = document.getElementById("input-textarea")
+                let counter = document.getElementById("input-characters")
+                let contentToPost = textArea.value;
+                
+                if(contentToPost.length === 0) {
+                    return false;
+                }
+                
+                textArea.value = "";
+                counter.innerText = 0;
+                
+                createPostHTML(contentToPost)
+                return false;
+            }
+            let currentPostId = 1;
+            function createPostHTML(postContent) {
+                let now = new Date()
+                let time = now.toLocaleTimeString()
+                let date = now.toLocaleString()
+                let name = "Amritesh Gupta"
+                let username = "ammyansh"
+                
+                currentPostId = currentPostId + 1
+                
+                postContent = postContent.replace(/</g, "&lt;")
+                postContent = postContent.replace(/\n/g, "<br />")
+                postContent = postContent.replace(/(https?:\/\/[^\s]+)/g, "<a href=\"$1\" target=\"_blank\">$1</a>")
+                
+                let template = `
+                    <article id="article-container-${currentPostId}">
+                        <header>
+                            <button class="close" onclick="deletePost(${currentPostId})">
+                                <img src="tweeter/images/close.png" height="15" width="15"/>
+                            </button>
+                            <div class="avatar">
+                            <img src="avatar.png" height="40" width="40"/>
+                            </div>
+                            <h1>${name}</h1>
+                            <h2>@${username}</h2>
+                        </header>
+                        <blockquote>
+                            ${postContent}
+                        </blockquote>
+                        <hr/>
+                        <footer>
+                            <p class="date-posted">Posted
+                                <time>${date}</time>
+                            </p>
+                            <button class="heart" onclick="lovePost(${currentPostId})">
+                                <img src="tweeter/images/heart.svg" id="heart-image-${currentPostId}" height="15" width="16"/>
+                            </button>
+                        </footer>
+                    </article>`
+                document.getElementById("form-container").insertAdjacentHTML("afterend", template)
+            }
+        </script>
+
 </head>
 
 <body>
@@ -29,7 +113,44 @@
 
        
     </div>
-    <div class="footer">
+    <div class="footer"><main id="container-wrapper">
+        <form id="form-container" onsubmit="return false;">
+            <div class="avatar" id="input-avatar">
+                <img src="avatar.png" height="40" width="40"/>
+            </div>
+            <fieldset>
+                <textarea placeholder="What's happening?" id="input-textarea" onkeypress="checkCharacterCount(this)" onchange="checkCharacterCount(this)"></textarea>
+                <div class="character-count"><span id="input-characters">0</span>/140 characters</div>
+            </fieldset>
+            <button class="compose" onclick="submitPost()">
+                <img src="tweeter/images/compose-icon.png" height="30" width="30"/>
+            </button>
+        </form>
+        <article id="article-container-1">
+            <header>
+                <button class="close" onclick="deletePost(1)">
+                    <img src="tweeter/images/close.png" height="15" width="15"/>
+                </button>
+                <div class="avatar">
+                    <img src="avatar.png" height="40" width="40"/>
+                </div>
+                <h1>Amritesh Gupta</h1>
+                <h2>@amriteshgupta</h2>
+            </header>
+            <blockquote>
+                Hi, everyone. I'm Amritesh Gupta
+            </blockquote>
+            <hr/>
+            <footer>
+                <p class="date-posted">Posted
+                    <time>01/12/21 17:46:35</time>
+                </p>
+                <button class="heart" onclick="lovePost(1)">
+                <img src="tweeter/images/heart.svg" id="heart-image-1" height="15" width="16"/>
+            </button>
+            </footer>
+        </article>
+    </main>
         
     </div>
 </div>
